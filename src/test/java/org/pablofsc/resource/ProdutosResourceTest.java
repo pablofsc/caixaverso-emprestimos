@@ -161,4 +161,64 @@ public class ProdutosResourceTest {
         .then()
         .statusCode(404);
   }
+
+  @Test
+  public void deveRejeitarCriacaoDeProdutoComNomeVazio() {
+    ProdutoEntity produto = new ProdutoEntity();
+    produto.nome = ""; // Nome vazio deve falhar na validação
+    produto.taxaJurosAnual = 12.5;
+    produto.prazoMaximoMeses = 24;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(produto)
+        .when().post("/produtos")
+        .then()
+        .statusCode(400);
+  }
+
+  @Test
+  public void deveRejeitarCriacaoDeProdutoComTaxaJurosNegativa() {
+    ProdutoEntity produto = new ProdutoEntity();
+    produto.nome = "Produto Teste";
+    produto.taxaJurosAnual = -5.0; // Taxa negativa deve falhar na validação
+    produto.prazoMaximoMeses = 24;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(produto)
+        .when().post("/produtos")
+        .then()
+        .statusCode(400);
+  }
+
+  @Test
+  public void deveRejeitarCriacaoDeProdutoComPrazoZero() {
+    ProdutoEntity produto = new ProdutoEntity();
+    produto.nome = "Produto Teste";
+    produto.taxaJurosAnual = 12.5;
+    produto.prazoMaximoMeses = 0; // Prazo zero deve falhar na validação
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(produto)
+        .when().post("/produtos")
+        .then()
+        .statusCode(400);
+  }
+
+  @Test
+  public void deveRejeitarAtualizacaoComDadosInvalidos() {
+    ProdutoEntity produto = new ProdutoEntity();
+    produto.nome = null; // Nome nulo deve falhar na validação
+    produto.taxaJurosAnual = -10.0; // Taxa negativa deve falhar na validação
+    produto.prazoMaximoMeses = -5; // Prazo negativo deve falhar na validação
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(produto)
+        .when().put("/produtos/1")
+        .then()
+        .statusCode(400);
+  }
 }

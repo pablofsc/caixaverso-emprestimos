@@ -43,6 +43,35 @@ public class SimulacaoServiceTest {
     assertNotNull(response.parcelaMensal);
     assertNotNull(response.memoriaCalculo);
     assertEquals(12, response.memoriaCalculo.size());
+
+    assertTrue(response.valorSolicitado > 0, "Valor solicitado deve ser positivo");
+    assertTrue(response.prazoMeses > 0, "Prazo deve ser positivo");
+    assertTrue(response.taxaJurosEfetivaMensal >= 0, "Taxa efetiva mensal não pode ser negativa");
+    assertTrue(response.parcelaMensal > 0, "Parcela mensal deve ser positiva");
+    assertTrue(response.valorTotalComJuros >= response.valorSolicitado, "Valor total deve ser maior ou igual ao solicitado");
+  }
+
+  @Test
+  @Transactional
+  public void deveCalcularJurosCorretamenteParaTaxa12PorcentoAoAno() {
+    ProdutoEntity produto = new ProdutoEntity();
+    produto.nome = "Empréstimo 12% a.a.";
+    produto.taxaJurosAnual = 12.0;
+    produto.prazoMaximoMeses = 24;
+    produto.persist();
+
+    SimulacaoRequest request = new SimulacaoRequest();
+    request.idProduto = produto.id;
+    request.valorSolicitado = 1000.0f;
+    request.prazoMeses = 12;
+
+    SimulacaoResponse response = simulacaoService.simular(request);
+
+    assertEquals(0.00949, response.taxaJurosEfetivaMensal, 0.00001, "Taxa efetiva mensal incorreta para 12% a.a.");
+
+    assertEquals(88.85, response.parcelaMensal, 1.0, "Parcela calculada incorretamente");
+
+    assertEquals(response.parcelaMensal * 12, response.valorTotalComJuros, 0.10, "Valor total incorreto");
   }
 
   @Test
@@ -63,14 +92,12 @@ public class SimulacaoServiceTest {
   @Test
   @Transactional
   public void deveLancarExcecaoQuandoPrazoExcedeLimite() {
-    // Create a product with max 12 months
     ProdutoEntity produto = new ProdutoEntity();
     produto.nome = "Empréstimo Pessoal";
     produto.taxaJurosAnual = 12.0;
     produto.prazoMaximoMeses = 12;
     produto.persist();
 
-    // Request with 24 months
     SimulacaoRequest request = new SimulacaoRequest();
     request.idProduto = produto.id;
     request.valorSolicitado = 10000.0f;
