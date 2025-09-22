@@ -6,16 +6,12 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.Entity;
 
 @Entity
 @RegisterForReflection
-@Data
-@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class ProdutoEntity extends PanacheEntity {
 
