@@ -6,6 +6,7 @@ import org.pablofsc.model.ProdutoEntity;
 import org.pablofsc.service.ProdutoService;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -32,14 +33,14 @@ public class ProdutosResource {
   }
 
   @POST
-  public Response create(ProdutoEntity produto) {
+  public Response create(@Valid ProdutoEntity produto) {
     ProdutoEntity created = produtoService.create(produto);
     return Response.status(Response.Status.CREATED).entity(created).build();
   }
 
   @PUT
   @Path("/{id}")
-  public Response update(@PathParam("id") Long id, ProdutoEntity produto) {
+  public Response update(@PathParam("id") Long id, @Valid ProdutoEntity produto) {
     ProdutoEntity updated = produtoService.update(id, produto);
 
     if (updated == null) {
