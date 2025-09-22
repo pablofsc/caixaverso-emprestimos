@@ -4,14 +4,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @RegisterForReflection
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SimulacaoRequest {
 
   @NotNull(message = "ID do produto é obrigatório")
