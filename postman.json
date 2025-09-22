@@ -68,7 +68,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"nome\": \"Empréstimo Pessoal\",\n  \"taxaJurosAnual\": 12.5,\n  \"prazoMaximoMeses\": 60\n}",
+					"raw": "{\n  \"nome\": \"Empréstimo Pessoal\",\n  \"taxaJurosAnual\": 18.0,\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -160,6 +160,37 @@
 							"key": "id",
 							"value": "2"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fazer simulação",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"idProduto\": 1,\n  \"valorSolicitado\": 10000.00,\n  \"prazoMeses\": 12\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/simulacoes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"simulacoes"
 					]
 				}
 			},
