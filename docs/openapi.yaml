@@ -1,0 +1,209 @@
+---
+openapi: 3.0.3
+info:
+  title: Generated API
+  version: "1.0"
+tags:
+- name: Produtos
+  description: Operações relacionadas aos produtos de empréstimo
+- name: Simulações
+  description: Operações para simulação de empréstimos
+paths:
+  /produtos:
+    get:
+      tags:
+      - Produtos
+      summary: Listar todos os produtos
+      description: Retorna uma lista com todos os produtos de empréstimo disponíveis
+      responses:
+        "200":
+          description: Lista de produtos retornada com sucesso
+          content: {}
+    post:
+      tags:
+      - Produtos
+      summary: Criar novo produto
+      description: Cria um novo produto financeiro
+      responses:
+        "201":
+          description: Produto criado com sucesso
+          content: {}
+        "400":
+          description: Dados inválidos fornecidos
+  /produtos/{id}:
+    get:
+      tags:
+      - Produtos
+      summary: Buscar produto por ID
+      description: Retorna um produto específico pelo seu identificador
+      parameters:
+      - name: id
+        in: path
+        description: ID do produto
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          description: Produto encontrado
+          content: {}
+        "204":
+          description: Produto não encontrado
+    put:
+      tags:
+      - Produtos
+      summary: Atualizar produto
+      description: Atualiza os dados de um produto existente
+      parameters:
+      - name: id
+        in: path
+        description: ID do produto
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          description: Produto atualizado com sucesso
+          content: {}
+        "404":
+          description: Produto não encontrado
+        "400":
+          description: Dados inválidos fornecidos
+    delete:
+      tags:
+      - Produtos
+      summary: Excluir produto
+      description: Remove um produto do sistema
+      parameters:
+      - name: id
+        in: path
+        description: ID do produto
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "204":
+          description: Produto excluído com sucesso
+        "404":
+          description: Produto não encontrado
+  /simulacoes:
+    post:
+      tags:
+      - Simulações
+      summary: Simular empréstimo
+      description: Realiza uma simulação de empréstimo com base nos parâmetros fornecidos
+      responses:
+        "200":
+          description: Simulação realizada com sucesso
+          content: {}
+        "400":
+          description: Parâmetros inválidos para simulação
+components:
+  schemas:
+    MemoriaCalculo:
+      type: object
+      properties:
+        mes:
+          format: int32
+          type: integer
+        saldoDevedorInicial:
+          format: double
+          type: number
+        juros:
+          format: double
+          type: number
+        amortizacao:
+          format: double
+          type: number
+        saldoDevedorFinal:
+          format: double
+          type: number
+    ProdutoEntity:
+      required:
+      - nome
+      - taxaJurosAnual
+      - prazoMaximoMeses
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        nome:
+          pattern: \S
+          type: string
+        taxaJurosAnual:
+          format: double
+          minimum: 0
+          type: number
+        prazoMaximoMeses:
+          format: int32
+          minimum: 1
+          type: integer
+    SimulacaoRequest:
+      description: Dados para solicitação de simulação de empréstimo
+      required:
+      - idProduto
+      - valorSolicitado
+      - prazoMeses
+      type: object
+      properties:
+        idProduto:
+          format: int64
+          description: Identificador do produto financeiro
+          minimum: 1
+          type: integer
+          example: 1
+        valorSolicitado:
+          format: float
+          description: Valor do empréstimo solicitado
+          minimum: 0.01
+          type: number
+          example: 10000.0
+        prazoMeses:
+          format: int32
+          description: Prazo do empréstimo em meses
+          minimum: 1
+          type: integer
+          example: 12
+    SimulacaoResponse:
+      description: Resultado da simulação de empréstimo
+      type: object
+      properties:
+        produto:
+          description: Dados do produto financeiro utilizado na simulação
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/ProdutoEntity'
+        valorSolicitado:
+          format: double
+          description: Valor solicitado para o empréstimo
+          type: number
+          example: 10000.0
+        prazoMeses:
+          format: int32
+          description: Prazo do empréstimo em meses
+          type: integer
+          example: 12
+        taxaJurosEfetivaMensal:
+          format: double
+          description: Taxa de juros efetiva mensal aplicada
+          type: number
+          example: 0.015
+        valorTotalComJuros:
+          format: double
+          description: Valor total a ser pago com juros
+          type: number
+          example: 10956.18
+        parcelaMensal:
+          format: double
+          description: Valor da parcela mensal
+          type: number
+          example: 913.02
+        memoriaCalculo:
+          description: Detalhamento mês a mês da evolução do empréstimo
+          type: array
+          items:
+            $ref: '#/components/schemas/MemoriaCalculo'
